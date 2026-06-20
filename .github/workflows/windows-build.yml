@@ -1,0 +1,42 @@
+name: Windows Build
+
+# Builds the Windows installer (.exe). Run manually from the Actions tab, or on a tag.
+on:
+  workflow_dispatch:
+    inputs:
+      bake_models:
+        description: "Bundle models inside the installer (huge ~7GB)"
+        type: boolean
+        default: false
+  push:
+    tags: ["v*"]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Inno Setup
+        run: choco install innosetup --no-progress -y
+
+      - name: Build (download-models mode)
+        if: ${{ github.event.inputs.bake_models != 'true' }}
+        shell: pwsh
+        run: powershell -ExecutionPolicy Bypass -File packaging/build_windows.ps1
+
+      - name: Build (baked-models mode)
+        if: ${{ github.event.inputs.bake_models == 'true' }}
+        shell: pwsh
+        run: powershell -ExecutionPolicy Bypass -File packaging/build_windows.ps1 -BakeModels
+
+      - name: Upload installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: Vimaker-Windows-Installer
+          path: dist/installer/*.exe
+          if-no-files-found: error

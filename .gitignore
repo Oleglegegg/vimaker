@@ -1,0 +1,34 @@
+# Python
+.venv/
+.build-venv/
+__pycache__/
+*.pyc
+*.pyo
+.env
+uv.lock
+
+# App output / temp
+out/
+out_*/
+dist/
+build/
+*.spec.bak
+
+# Packaging artifacts (downloaded at build time, do not commit)
+packaging/ollama/
+
+# Media samples (adult content — never commit)
+samples/
+*.mp4
+*.mov
+*.MOV
+*.mkv
+*.avi
+*.webm
+*.m4v
+
+# OS / editor
+.DS_Store
+
+# Claude Code local files
+.claude/
